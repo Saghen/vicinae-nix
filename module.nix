@@ -25,6 +25,12 @@ in {
       default = true;
       description = "If the vicinae daemon should be started automatically";
     };
+
+    scale = lib.mkOption {
+      type = lib.types.number;
+      default = 1;
+      description = "QT_SCALE_FACTOR for the vicinae UI";
+    };
   };
   config = lib.mkIf cfg.enable {
     home.packages = [cfg.package];
@@ -39,6 +45,7 @@ in {
       Service = {
         Type = "simple";
         ExecStart = "${cfg.package}/bin/vicinae server";
+        Environment = lib.mkIf (cfg.scale != 1) "QT_SCALE_FACTOR=${toString cfg.scale}";
         Restart = "on-failure";
         RestartSec = 3;
       };
